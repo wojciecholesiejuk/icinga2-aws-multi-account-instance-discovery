@@ -1,0 +1,28 @@
+name: icinga2-multi-aws
+description: "file:///README.md"
+url: "https://github.com/wojciecholesiejuk/icinga2-multi-aws"
+tags: AWS
+vendor: Linux
+target: Operating System
+type: Add-on
+license: MIT
+releases: 
+  - 
+    name: 0.1
+    description: "wip"
+    files: 
+      - 
+        name: icinga2-multi-aws.py
+        url: "file:///icinga2-multi-aws.py"
+        description: "Hosts synchronizer"
+        checksum: d41d8cd98f00b204e9800998ecf8427e
+      - 
+        name: setup.py
+        url: "file:///setup.py"
+        description: "pyhton setup"
+        checksum: d41d8cd98f00b204e9800998ecf8427e
+      - 
+        name: install.sh
+        url: "file:///install.sh"
+        description: "Install script"
+        checksum: d41d8cd98f00b204e9800998ecf8427e
