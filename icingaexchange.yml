@@ -1,6 +1,6 @@
-name: icinga2-multi-aws
+name: icinga2-aws-multi-account-instance-discovery
 description: "file:///README.md"
-url: "https://github.com/wojciecholesiejuk/icinga2-multi-aws"
+url: "https://github.com/wojciecholesiejuk/icinga2-aws-multi-account-instance-discovery"
 tags: AWS
 vendor: Linux
 target: Operating System

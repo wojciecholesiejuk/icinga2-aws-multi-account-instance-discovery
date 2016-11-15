@@ -1,0 +1,38 @@
+{
+    "info":{
+        "name": "configuration file for icinga2-multi-aws module",
+        "description": "includes settings for the module"
+    },
+    "settings":{
+        "hosts_files_location": "/etc/icinga2/conf.d/", 
+        "hosts_files_location_comment": "### location of the icinga2 conf.d folder",
+        "check_frequency": "5",
+        "check_frequency_comment": "### how ofter to retrieva a list of aws instances in minutes",
+        "install_crontab": "true", 
+        "install_crontab_comment": "### crontab installation for automated check",
+        "all_aws_regions": ["us-east-1", "us-east-2", "us-west-1", "us-west-2", "ap-south-1","ap-northeast-2", "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "eu-central-1", "eu-west-1", "sa-east-1"],
+        "all_aws_regions_comment": "### List of aws regions to look up the instances in"        
+    },
+    "aws_accounts":{
+        "shared": { 
+            "comment": "### name of the aws account",
+            "regions": ["eu-west-1"],
+            "regions_comment": "### list of aws regions for this account, if specified, search will be limited to those, and all_aws_regions will be ignored",
+            "access_key": "access_key",
+            "access_key_comment": "### aws access key",
+            "secret_access_key": "secret_access_key",
+            "secret_access_key_comment": "### secret_access_key",
+            "add_host_tag": "monitoring-icinga2",
+            "add_host_tag": "### name of aws tag key that will enable the host to be added to icinga2",
+            "ignore": "false",
+            "ignore_comment": "setting to true will ignore adding instances from this account, usefull for testing, changes etc."
+        },
+        "radio": {
+            "regions": ["eu-west-1"],
+            "access_key": "access_key",
+            "secret_access_key": "secret_access_key",
+            "add_host_tag": "monitoring-icinga2",
+            "ignore": "false"
+        }
+    }
+}
