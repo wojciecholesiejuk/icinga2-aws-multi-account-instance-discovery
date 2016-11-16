@@ -142,7 +142,7 @@ class get_aws_instances:
                     name = tag['Value']
         return name
 
-    def remove_terminated_instances:
+    def remove_terminated_instances(self):
         """Reads the SQS queue for any instances that were removed from AWS
         Instance termination is detected by AWS CloudWatch Event
         """
