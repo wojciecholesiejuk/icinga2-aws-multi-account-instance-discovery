@@ -51,6 +51,8 @@ class get_aws_instances:
             raise ValueError('Config file not found')
 
     def update_aws_hosts(self):
+        """
+        """
         deploy_config = False
         all_instances = self.list_instances()
         for account in all_instances:
@@ -60,6 +62,7 @@ class get_aws_instances:
                 returnv = subprocess.call(["icingacli", "director", "host", "exists", instance['PublicDnsName']])
                 print " return A === " + str(returnv)
                 if subprocess.call(["icingacli", "director", "host", "exists", instance['PublicDnsName']]) == 1 :
+                    deploy_config = True
                     instance_desc =  {
                         "imports": "aws-host",
                         "address":  instance['PublicIpAddress'],
@@ -79,8 +82,7 @@ class get_aws_instances:
                 returnv = subprocess.call(["icingacli", "director", "host", "exists", instance['PublicDnsName']])
                 print " return B === " + str(returnv)
         if deploy_config:
-            pass
-
+            subprocess.call(["icingacli", "director", "config", "deploy"])
 
     def list_instances(self):
         """Looks up the aws accounts for tagged instances
