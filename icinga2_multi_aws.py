@@ -164,8 +164,7 @@ class get_aws_instances:
                     region_name=region
                 )
                 response = client.receive_message(
-                    QueueUrl=access['terminated_instances_queue'],
-                    MaxNumberOfMessages=100
+                    QueueUrl=access['terminated_instances_queue']
                 )
                 if 'Messages' in response:
                     for message in response['Messages']:
