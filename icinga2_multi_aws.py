@@ -168,8 +168,10 @@ class get_aws_instances:
                 )
                 if 'Messages' in response:
                     for message in response['Messages']:
-                        pprint.pprint(json.loads(message['Body']))
-                            ## instance_id = message.message_attributes.get('Author').get('StringValue')
+                        message_body = json.loads(message['Body'])
+                        instance_id = message_body['detail']['instance-id']
+
+                        pprint.pprint(instance_id)
                         """
                         subprocess.call(["icingacli", "director", "host", "delete", hostname])
                         response = client.delete_message(
