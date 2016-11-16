@@ -167,10 +167,8 @@ class get_aws_instances:
                     QueueUrl=access['terminated_instances_queue']
                 )
                 if 'Messages' in response:
-                    for message in response['Messages']:
-                        #pprint.pprint(message)
-                        message_body = json.loads(message['Body'])
-                        pprint.pprint(message_body)
+                    for json.loads(message) in response['Messages']:
+                        pprint.pprint(message)
                             ## instance_id = message.message_attributes.get('Author').get('StringValue')
                         """
                         subprocess.call(["icingacli", "director", "host", "delete", hostname])
