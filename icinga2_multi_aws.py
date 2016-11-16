@@ -51,17 +51,18 @@ class get_aws_instances:
             raise ValueError('Config file not found')
 
     def update_aws_hosts(self):
-        """
+        """Gets list of instances , iterates over the lists and adds new ones with Director cli call.
+        Deploys new config if new instances are found
         """
         deploy_config = False
         all_instances = self.list_instances()
         for account in all_instances:
             for instance in all_instances[account]:
                 print "####################"
-                pprint.pprint(instance['PublicDnsName'])
-                returnv = subprocess.call(["icingacli", "director", "host", "exists", instance['PublicDnsName']])
+                pprint.pprint(instance['InstanceId'])
+                returnv = subprocess.call(["icingacli", "director", "host", "exists", instance['InstanceId']])
                 print " return A === " + str(returnv)
-                if subprocess.call(["icingacli", "director", "host", "exists", instance['PublicDnsName']]) == 1 :
+                if subprocess.call(["icingacli", "director", "host", "exists", instance['InstanceId']]) == 1 :
                     deploy_config = True
                     instance_desc =  {
                         "imports": "aws-host",
@@ -77,9 +78,9 @@ class get_aws_instances:
                     for tag in instance['Tags']:
                         instance_desc['vars.tag_'+tag['Key']] = tag['Value']
 
-                    subprocess.call(["icingacli", "director", "host", "create", instance['PublicDnsName'], "--json", json.dumps(instance_desc)])
+                    subprocess.call(["icingacli", "director", "host", "create", instance['InstanceId'], "--json", json.dumps(instance_desc)])
                     print "node doesnt' exist FAIL, adding"
-                returnv = subprocess.call(["icingacli", "director", "host", "exists", instance['PublicDnsName']])
+                returnv = subprocess.call(["icingacli", "director", "host", "exists", instance['InstanceId']])
                 print " return B === " + str(returnv)
         if deploy_config:
             subprocess.call(["icingacli", "director", "config", "deploy"])
@@ -141,18 +142,44 @@ class get_aws_instances:
                     name = tag['Value']
         return name
 
-    def compare_with_hostsfile(self, file1, file2):
-        ###if os.path.isfile(config):
-        pass
+    def remove_terminated_instances:
+        """Reads the SQS queue for any instances that were removed from AWS
+        Instance termination is detected by AWS CloudWatch Event
+        """
+        aws_accounts = self.config['aws_accounts']
+        for account, access in aws_accounts.iteritems():
+            if('access_key' not in access or 'secret_access_key' not in access or access['ignore'] == 'true'):
+                continue
 
-    def write_hostsfile(self, name, text):
-        pass
+            if('regions' in access):
+                regions = access['regions']
+            else:
+                regions = self.config['settings']['all_aws_regions']
 
-    def read_hostsfile(self, file):
-        pass
-
-    def restart_service(self):
-        pass
+            for region in regions:
+                client = boto3.client(
+                    'sqs',
+                    aws_access_key_id=access['access_key'],
+                    aws_secret_access_key=access['secret_access_key'],
+                    region_name=region
+                )
+                response = client.receive_message(
+                    QueueUrl=access['terminated_instances_queue']
+                    MaxNumberOfMessages=100
+                )
+                if 'Messages' in response:
+                    for message in response['Messages']:
+                        pprint.pprint(message)
+                        if message.message_attributes is not None:
+                            pprint.pprint(message.message_attributes)
+                            ## instance_id = message.message_attributes.get('Author').get('StringValue')
+                        """
+                        subprocess.call(["icingacli", "director", "host", "delete", hostname])
+                        response = client.delete_message(
+                            QueueUrl=access['terminated_instances_queue'],
+                            ReceiptHandle='XXXXXXXXXXXXXXXXxxxxxx'
+                        )
+                        """
 
     def is_json(self,  myjson):
         """Tests if the supplied string is valid json
@@ -173,4 +200,5 @@ class get_aws_instances:
         return True
 
 multiaws = get_aws_instances("config.json")
-output=multiaws.update_aws_hosts()
+multiaws.update_aws_hosts()
+multiaws.remove_terminated_instances()
