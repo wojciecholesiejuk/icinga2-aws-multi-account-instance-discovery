@@ -146,6 +146,7 @@ class get_aws_instances:
         """Reads the SQS queue for any instances that were removed from AWS
         Instance termination is detected by AWS CloudWatch Event
         """
+        deploy_config = False
         aws_accounts = self.config['aws_accounts']
         for account, access in aws_accounts.iteritems():
             if('access_key' not in access or 'secret_access_key' not in access or access['ignore'] == 'true'):
@@ -167,18 +168,19 @@ class get_aws_instances:
                     QueueUrl=access['terminated_instances_queue']
                 )
                 if 'Messages' in response:
+                    deploy_config = True
                     for message in response['Messages']:
                         message_body = json.loads(message['Body'])
                         instance_id = message_body['detail']['instance-id']
-
-                        pprint.pprint(instance_id)
-                        """
-                        subprocess.call(["icingacli", "director", "host", "delete", hostname])
-                        response = client.delete_message(
+                        print(instance_id)
+                        subprocess.call(["icingacli", "director", "host", "delete", instance_id])
+                        client.delete_message(
                             QueueUrl=access['terminated_instances_queue'],
                             ReceiptHandle=message['ReceiptHandle']
                         )
-                        """
+
+        if deploy_config:
+            subprocess.call(["icingacli", "director", "config", "deploy"])
 
     def is_json(self,  myjson):
         """Tests if the supplied string is valid json
