@@ -66,7 +66,7 @@ class get_aws_instances:
                     deploy_config = True
                     instance_desc =  {
                         "imports": "aws-host",
-                        "address":  instance['InstanceId'],
+                        "address":  instance['PublicIpAddress'],
                         "display_name": "AWS-" + account + "-"  + self.get_instance_name_from_tags(instance),
                         "groups": [ "aws-" + account ],
                         "vars.location": "AWS " +  account,
@@ -168,16 +168,12 @@ class get_aws_instances:
                     QueueUrl=access['terminated_instances_queue']
                 )
                 if 'Messages' in response:
-                    deploy_config = True
                     for message in response['Messages']:
                         message_body = json.loads(message['Body'])
                         instance_id = message_body['detail']['instance-id']
-                        print(instance_id)
                         if subprocess.call(["icingacli", "director", "host", "exists", instance_id]) == 1 :
                             subprocess.call(["icingacli", "director", "host", "delete", instance_id])
-                            print "Host found and deleted"
-                        else:
-                            print "Host not found"
+                            deploy_config = True
                         client.delete_message(
                             QueueUrl=access['terminated_instances_queue'],
                             ReceiptHandle=message['ReceiptHandle']
