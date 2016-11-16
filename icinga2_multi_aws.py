@@ -66,11 +66,11 @@ class get_aws_instances:
                     deploy_config = True
                     instance_desc =  {
                         "imports": "aws-host",
-                        "address":  instance['PublicIpAddress'],
+                        "address":  instance['InstanceId'],
                         "display_name": "AWS-" + account + "-"  + self.get_instance_name_from_tags(instance),
                         "groups": [ "aws-" + account ],
                         "vars.location": "AWS " +  account,
-                        "vars.imageid":  instance['PublicIpAddress'],
+                        "vars.imageid":  instance['ImageId'],
                         "vars.instanceid":  instance['InstanceId'],
                         "vars.instancetype":  instance['InstanceType'],
                         "vars.keyname":  instance['KeyName']
@@ -122,12 +122,12 @@ class get_aws_instances:
                     for res in response['Reservations']:
                         for instance in res['Instances']:
                             inst = {}
-                            inst['ImageId'] = instance['ImageId']
+                            inst['ImageId'] = instance['ImageId'] if 'ImageId' in instance else 'None'
                             inst['InstanceId'] = instance['InstanceId']
-                            inst['InstanceType'] = instance['InstanceType']
-                            inst['KeyName'] = instance['KeyName']
-                            inst['PublicIpAddress'] = instance['PublicIpAddress']
-                            inst['PublicDnsName'] = instance['PublicDnsName']
+                            inst['InstanceType'] = instance['InstanceType'] if 'InstanceType' in instance else 'None'
+                            inst['KeyName'] = instance['KeyName'] if 'KeyName' in instance else 'None'
+                            inst['PublicIpAddress'] = instance['PublicIpAddress'] if 'PublicIpAddress' in instance else 'None'
+                            inst['PublicDnsName'] = instance['PublicDnsName'] if 'PublicDnsName' in instance else 'None'
                             inst['Tags'] = instance['Tags']
                             account_instances.append(inst)
             instances[account]  = account_instances
