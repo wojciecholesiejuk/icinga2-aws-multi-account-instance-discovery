@@ -2,6 +2,7 @@ import boto3
 import pprint
 import json
 import os.path
+import subprocess
 
 class get_aws_instances:
     """ Retrieves EC2 instances from aws accounts and adds to/creates incinga config file for the 
@@ -9,15 +10,12 @@ class get_aws_instances:
     Step by step:
         - check for/read config file
         - connect to aws get instances based on defined accounts, regions and tags
-        - write instaces to 'next' config files
-        - compare with 'existing' config files, finish if no changes are detected
+        - compare with 'existing' multi-aws hostsfile, finish if no changes are detected
         - if changes detected:
-            - backup old files
-            - crate/delete/replace config files
+            - backup old hostfile
             - restart service
 
     """
-    restart_required = False
     hostsfiles = []
 
     def __init__(self, config='config.json'):
@@ -53,13 +51,21 @@ class get_aws_instances:
             raise ValueError('Config file not found')
 
     def update_aws_hosts(self):
-        self.create_next_hostfiles(self.list_instances())
-        if self.compare_hostsfiles == True:
-            self.remove_next_hostfiles()
-            return True
-        else:
-            self.update_hostsfiles()
-            self.restart_service()
+        deploy_config = False
+        all_instances = self.list_instances()
+        for account in all_instances:
+            for instance in all_instances[account]:
+                print "####################"
+                pprint.pprint(instance['PublicDnsName'])
+                returnv = subprocess.call(["icingacli", "director", "host", "exists", instance['PublicDnsName']])
+                print " return A === " + str(returnv)
+                if subprocess.call(["icingacli", "director", "host", "exists", instance['PublicDnsName']]) == 1 :
+                        print "node doesnt' exist FAIL"
+                returnv = subprocess.call(["icingacli", "director", "host", "exists", instance['PublicDnsName']])
+                print " return B === " + str(returnv)
+        if deploy_config:
+            pass
+
 
     def list_instances(self):
         """Looks up the aws accounts for tagged instances
@@ -107,11 +113,11 @@ class get_aws_instances:
                             inst['Tags'] = instance['Tags']
                             account_instances.append(inst)
             instances[account]  = account_instances
-        ### 
-        pprint.pprint(instances)
-        return instancesx
+        ### pprint.pprint(instances)
+        return instances
 
-    def create_next_hostfiles(self, instances):
+    def compare_with_hostsfile(self, file1, file2):
+        ###if os.path.isfile(config):
         pass
 
     def write_hostsfile(self, name, text):
@@ -120,13 +126,7 @@ class get_aws_instances:
     def read_hostsfile(self, file):
         pass
 
-    def check_hostsfile_is_safe(self, file):
-        pass
-
     def restart_service(self):
-        pass
-
-    def compare_hostsfiles(self, file1, file2):
         pass
 
     def is_json(self,  myjson):
@@ -146,3 +146,6 @@ class get_aws_instances:
         except ValueError, e:
             return False
         return True
+
+multiaws = get_aws_instances("config.json")
+output=multiaws.update_aws_hosts()
