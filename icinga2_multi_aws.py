@@ -135,7 +135,7 @@ class get_aws_instances:
         name = 'undefined'
         if 'Tags' in instance:
             for tag in instance['Tags']:
-                if tag['Key'] == 'Name'
+                if tag['Key'] == 'Name':
                     name = tag['Value']
         return name
 
