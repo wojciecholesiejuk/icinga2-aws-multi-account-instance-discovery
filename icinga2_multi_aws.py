@@ -60,7 +60,22 @@ class get_aws_instances:
                 returnv = subprocess.call(["icingacli", "director", "host", "exists", instance['PublicDnsName']])
                 print " return A === " + str(returnv)
                 if subprocess.call(["icingacli", "director", "host", "exists", instance['PublicDnsName']]) == 1 :
-                        print "node doesnt' exist FAIL"
+                    instance_desc =  {
+                        "imports": "aws-host",
+                        "address":  instance['PublicIpAddress'],
+                        "display_name": "AWS-" + account + "-"  + self.get_instance_name_from_tags(instance),
+                        "groups": [ "aws-" + account ],
+                        "vars.location": "AWS " +  account,
+                        "vars.imageid":  instance['PublicIpAddress'],
+                        "vars.instanceid":  instance['InstanceId'],
+                        "vars.instancetype":  instance['InstanceType'],
+                        "vars.keyname":  instance['KeyName']
+                    }
+                    for tag in instance['Tags']:
+                        instance_desc['vars.tag_'+tag['Key']] = tag['Value']
+
+                    subprocess.call(["icingacli", "director", "host", "create", instance['PublicDnsName'], "--json", json.dumps(instance_desc)])
+                    print "node doesnt' exist FAIL, adding"
                 returnv = subprocess.call(["icingacli", "director", "host", "exists", instance['PublicDnsName']])
                 print " return B === " + str(returnv)
         if deploy_config:
@@ -115,6 +130,14 @@ class get_aws_instances:
             instances[account]  = account_instances
         ### pprint.pprint(instances)
         return instances
+
+    def get_instance_name_from_tags(self, instance):
+        name = 'undefined'
+        if 'Tags' in instance:
+            for tag in instance['Tags']:
+                if tag['Key'] == 'Name'
+                    name = tag['Value']
+        return name
 
     def compare_with_hostsfile(self, file1, file2):
         ###if os.path.isfile(config):
