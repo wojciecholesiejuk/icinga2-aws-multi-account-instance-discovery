@@ -173,7 +173,11 @@ class get_aws_instances:
                         message_body = json.loads(message['Body'])
                         instance_id = message_body['detail']['instance-id']
                         print(instance_id)
-                        subprocess.call(["icingacli", "director", "host", "delete", instance_id])
+                        if subprocess.call(["icingacli", "director", "host", "exists", instance_id]) == 1 :
+                            subprocess.call(["icingacli", "director", "host", "delete", instance_id])
+                            print "Host found and deleted"
+                        else:
+                            print "Host not found"
                         client.delete_message(
                             QueueUrl=access['terminated_instances_queue'],
                             ReceiptHandle=message['ReceiptHandle']
