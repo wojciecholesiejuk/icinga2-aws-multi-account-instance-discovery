@@ -73,6 +73,7 @@ class get_aws_instances:
                         "vars.imageid":  instance['ImageId'],
                         "vars.instanceid":  instance['InstanceId'],
                         "vars.instancetype":  instance['InstanceType'],
+                        "vars.ip":  instance['PublicIpAddress'],
                         "vars.keyname":  instance['KeyName']
                     }
                     for tag in instance['Tags']:
@@ -169,6 +170,8 @@ class get_aws_instances:
                 )
                 if 'Messages' in response:
                     for message in response['Messages']:
+                        if 'Body' not in message:
+                            continue
                         message_body = json.loads(message['Body'])
                         instance_id = message_body['detail']['instance-id']
                         if subprocess.call(["icingacli", "director", "host", "exists", instance_id]) == 1 :
