@@ -22,8 +22,10 @@
             "access_key_comment": "### aws access key",
             "secret_access_key": "secret_access_key",
             "secret_access_key_comment": "### secret_access_key",
-            "add_host_tag": "monitoring-icinga2",
+            "add_host_tag": "monitoring_icinga2",
             "add_host_tag": "### name of aws tag key that will enable the host to be added to icinga2",
+            "terminated_instances_queue": "https://sqs.eu-west-1.amazonaws.com/000000000/terminated-ec2-instances",
+            "terminated_instances_queue_comment": "SQS Queue to lookup removed EC2 instances",
             "ignore": "false",
             "ignore_comment": "setting to true will ignore adding instances from this account, usefull for testing, changes etc."
         },
@@ -31,7 +33,7 @@
             "regions": ["eu-west-1"],
             "access_key": "access_key",
             "secret_access_key": "secret_access_key",
-            "add_host_tag": "monitoring-icinga2",
+            "add_host_tag": "monitoring_icinga2",
             "ignore": "false"
         }
     }

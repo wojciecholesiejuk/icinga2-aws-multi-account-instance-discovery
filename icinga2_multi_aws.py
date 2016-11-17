@@ -58,16 +58,14 @@ class get_aws_instances:
         all_instances = self.list_instances()
         for account in all_instances:
             for instance in all_instances[account]:
-                print "####################"
-                pprint.pprint(instance['InstanceId'])
                 returnv = subprocess.call(["icingacli", "director", "host", "exists", instance['InstanceId']])
-                print " return A === " + str(returnv)
                 if subprocess.call(["icingacli", "director", "host", "exists", instance['InstanceId']]) == 1 :
                     deploy_config = True
+                    nodename = self.get_instance_name_from_tags(instance)
                     instance_desc =  {
                         "imports": "aws-host",
                         "address":  instance['PublicIpAddress'],
-                        "display_name": "AWS-" + account + "-"  + self.get_instance_name_from_tags(instance),
+                        "display_name": "AWS-" + account + "-"  + nodename,
                         "groups": [ "aws-" + account ],
                         "vars.location": "AWS " +  account,
                         "vars.imageid":  instance['ImageId'],
@@ -80,9 +78,8 @@ class get_aws_instances:
                         instance_desc['vars.tag_'+tag['Key']] = tag['Value']
 
                     subprocess.call(["icingacli", "director", "host", "create", instance['InstanceId'], "--json", json.dumps(instance_desc)])
-                    print "node doesnt' exist FAIL, adding"
+                    print "added node " + instance['InstanceId'] + " (" + nodename + ")"
                 returnv = subprocess.call(["icingacli", "director", "host", "exists", instance['InstanceId']])
-                print " return B === " + str(returnv)
         if deploy_config:
             subprocess.call(["icingacli", "director", "config", "deploy"])
 
@@ -97,7 +94,6 @@ class get_aws_instances:
         aws_accounts = self.config['aws_accounts']
         for account, access in aws_accounts.iteritems():
             account_instances = []
-            ### print account, access
             if('access_key' not in access or 'secret_access_key' not in access or access['ignore'] == 'true'):
                 continue
 
@@ -132,7 +128,6 @@ class get_aws_instances:
                             inst['Tags'] = instance['Tags']
                             account_instances.append(inst)
             instances[account]  = account_instances
-        ### pprint.pprint(instances)
         return instances
 
     def get_instance_name_from_tags(self, instance):
