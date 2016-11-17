@@ -94,7 +94,7 @@ class get_aws_instances:
         aws_accounts = self.config['aws_accounts']
         for account, access in aws_accounts.iteritems():
             account_instances = []
-            if('access_key' not in access or 'secret_access_key' not in access or access['ignore'] == 'true'):
+            if('access_key' not in access or 'secret_access_key' nexistsot in access or access['ignore'] == 'true'):
                 continue
 
             if('regions' in access):
@@ -198,6 +198,6 @@ class get_aws_instances:
             return False
         return True
 
-multiaws = get_aws_instances("config.json")
+multiaws = get_aws_instances("/srv/icinga2-aws-multi-account-instance-discovery/config.json")
 multiaws.update_aws_hosts()
 multiaws.remove_terminated_instances()
