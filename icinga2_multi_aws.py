@@ -94,7 +94,7 @@ class get_aws_instances:
         aws_accounts = self.config['aws_accounts']
         for account, access in aws_accounts.iteritems():
             account_instances = []
-            if('access_key' not in access or 'secret_access_key' nexistsot in access or access['ignore'] == 'true'):
+            if('access_key' not in access or 'secret_access_key' not in access or access['ignore'] == 'true'):
                 continue
 
             if('regions' in access):
