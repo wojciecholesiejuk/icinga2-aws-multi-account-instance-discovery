@@ -58,7 +58,6 @@ class get_aws_instances:
         all_instances = self.list_instances()
         for account in all_instances:
             for instance in all_instances[account]:
-                returnv = subprocess.call(["icingacli", "director", "host", "exists", instance['InstanceId']])
                 if subprocess.call(["icingacli", "director", "host", "exists", instance['InstanceId']]) == 1 :
                     deploy_config = True
                     nodename = self.get_instance_name_from_tags(instance)
@@ -79,7 +78,6 @@ class get_aws_instances:
 
                     subprocess.call(["icingacli", "director", "host", "create", instance['InstanceId'], "--json", json.dumps(instance_desc)])
                     print "added node " + instance['InstanceId'] + " (" + nodename + ")"
-                returnv = subprocess.call(["icingacli", "director", "host", "exists", instance['InstanceId']])
         if deploy_config:
             subprocess.call(["icingacli", "director", "config", "deploy"])
 
