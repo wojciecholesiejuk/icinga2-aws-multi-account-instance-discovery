@@ -111,6 +111,10 @@ class get_aws_instances:
                     {
                         'Name': 'tag-key',
                         'Values': [ access['add_host_tag'] ]
+                    },
+                    {
+                        'Name': 'instance-state-name',
+                        'Values': 'running'
                     }
                 ])
                 if 'Reservations' in response:
