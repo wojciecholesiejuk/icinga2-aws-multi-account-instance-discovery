@@ -114,7 +114,7 @@ class get_aws_instances:
                     },
                     {
                         'Name': 'instance-state-name',
-                        'Values': 'running'
+                        'Values': [ 'running' ]
                     }
                 ])
                 if 'Reservations' in response:
