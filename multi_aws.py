@@ -4,7 +4,7 @@ import json
 import os.path
 import subprocess
 
-class get_aws_instances:
+class process_icinga2_aws_instances:
     """ Retrieves EC2 instances from aws accounts and adds to/creates incinga config file for the 
     
     Step by step:
