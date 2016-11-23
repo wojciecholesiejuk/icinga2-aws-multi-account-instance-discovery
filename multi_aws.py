@@ -113,7 +113,7 @@ class process_icinga2_aws_instances:
                         'Values': [ access['add_host_tag'] ]
                     }
                 ]
-                if !removing_hosts:
+                if not removing_hosts:
                     filters.extend([
                         {
                             'Name': 'instance-state-name',
