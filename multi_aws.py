@@ -115,6 +115,10 @@ class process_icinga2_aws_instances:
                     {
                         'Name': 'instance-state-name',
                         'Values': [ 'running' ]
+                    },
+                    {
+                        'Name': 'tag:Environment',
+                        'Values': [ 'production' ]
                     }
                 ])
                 if 'Reservations' in response:
