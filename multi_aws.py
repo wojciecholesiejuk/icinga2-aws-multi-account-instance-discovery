@@ -56,11 +56,13 @@ class process_icinga2_aws_instances:
         """
         deploy_config = False
         all_instances = self.list_instances()
-        pprint.pprint(all_instances)
+        # pprint.pprint(all_instances)
         for account in all_instances:
             for instance in all_instances[account]:
                 pprint.pprint(instance)
-                if subprocess.call(["icingacli", "director", "host", "exists", instance['InstanceId']]) == 0 :
+                exists = subprocess.call(["icingacli", "director", "host", "exists", instance['InstanceId']])
+                pprint.pprint(exists)
+                if exists == 0 :
                     print ("x1")
                     pass
                 else:
