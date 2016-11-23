@@ -193,7 +193,6 @@ class process_icinga2_aws_instances:
                         if 'Body' not in message:
                             continue
                         message_body = json.loads(message['Body'])
-                        pprint.pprint(message_body)
                         instance_id = message_body['detail']['instance-id']
                         if subprocess.call(["icingacli", "director", "host", "exists", instance_id]) == 0 :
                             subprocess.call(["icingacli", "director", "host", "delete", instance_id])
