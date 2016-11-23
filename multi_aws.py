@@ -81,7 +81,7 @@ class process_icinga2_aws_instances:
         if deploy_config:
             subprocess.call(["icingacli", "director", "config", "deploy"])
 
-    def list_instances(self):
+    def list_instances(self, removing_hosts=False):
         """Looks up the aws accounts for tagged instances
         
         Returns:
@@ -107,20 +107,24 @@ class process_icinga2_aws_instances:
                     aws_secret_access_key=access['secret_access_key'],
                     region_name=region
                 )
-                response = client.describe_instances(Filters=[
+                filters = [
                     {
                         'Name': 'tag-key',
                         'Values': [ access['add_host_tag'] ]
-                    },
-                    {
-                        'Name': 'instance-state-name',
-                        'Values': [ 'running' ]
-                    },
-                    {
-                        'Name': 'tag:Environment',
-                        'Values': [ 'production' ]
                     }
-                ])
+                ]
+                if !removing_hosts:
+                    filters.extend([
+                        {
+                            'Name': 'instance-state-name',
+                            'Values': [ 'running' ]
+                        },
+                        {
+                            'Name': 'tag:Environment',
+                            'Values': [ 'Production' ]
+                        }
+                    ])
+                response = client.describe_instances(Filters=filters)
                 if 'Reservations' in response:
                     for res in response['Reservations']:
                         for instance in res['Instances']:
@@ -149,7 +153,7 @@ class process_icinga2_aws_instances:
         Deploys new config if new instances are found
         """
         deploy_config = False
-        all_instances = self.list_instances()
+        all_instances = self.list_instances(True)
         for account in all_instances:
             for instance in all_instances[account]:
                 if subprocess.call(["icingacli", "director", "host", "exists", instance['InstanceId']]) == 0 :
