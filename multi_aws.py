@@ -65,7 +65,7 @@ class process_icinga2_aws_instances:
                 if exists == 0 :
                     print ("x1")
                     pass
-                else:
+                elif exists == 1 or exists == NoneType:
                     print ("x2")
                     deploy_config = True
                     nodename = self.get_instance_name_from_tags(instance)
@@ -86,6 +86,9 @@ class process_icinga2_aws_instances:
 
                     subprocess.call(["icingacli", "director", "host", "create", instance['InstanceId'], "--json", json.dumps(instance_desc)])
                     print "added node " + instance['InstanceId'] + " (" + nodename + ")"
+                else:
+                    print ("x3")
+                    pass
         if deploy_config:
             print ("x3")
             subprocess.call(["icingacli", "director", "config", "deploy"])
