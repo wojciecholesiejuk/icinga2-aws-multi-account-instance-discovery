@@ -58,7 +58,9 @@ class process_icinga2_aws_instances:
         all_instances = self.list_instances()
         for account in all_instances:
             for instance in all_instances[account]:
-                if subprocess.call(["icingacli", "director", "host", "exists", instance['InstanceId']]) == 1 :
+                if subprocess.call(["icingacli", "director", "host", "exists", instance['InstanceId']]) == 0 :
+                    pass
+                else:
                     deploy_config = True
                     nodename = self.get_instance_name_from_tags(instance)
                     instance_desc =  {
