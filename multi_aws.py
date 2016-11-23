@@ -56,6 +56,7 @@ class process_icinga2_aws_instances:
         """
         deploy_config = False
         all_instances = self.list_instances()
+        pprint.pprint(all_instances)
         for account in all_instances:
             for instance in all_instances[account]:
                 pprint.pprint(instance)
