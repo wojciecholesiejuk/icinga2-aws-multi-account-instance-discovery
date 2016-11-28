@@ -59,14 +59,10 @@ class process_icinga2_aws_instances:
         # pprint.pprint(all_instances)
         for account in all_instances:
             for instance in all_instances[account]:
-                pprint.pprint(instance)
                 exists = subprocess.call(["icingacli", "director", "host", "exists", instance['InstanceId']])
-                pprint.pprint(exists)
-                if exists == 0 :
-                    print ("x1")
+                if exists == 0:
                     pass
                 elif exists == 1 or exists == NoneType:
-                    print ("x2")
                     deploy_config = True
                     nodename = self.get_instance_name_from_tags(instance)
                     instance_desc =  {
@@ -87,10 +83,8 @@ class process_icinga2_aws_instances:
                     subprocess.call(["icingacli", "director", "host", "create", instance['InstanceId'], "--json", json.dumps(instance_desc)])
                     print "added node " + instance['InstanceId'] + " (" + nodename + ")"
                 else:
-                    print ("x3")
-                    pass
+                    pass:
         if deploy_config:
-            print ("x3")
             subprocess.call(["icingacli", "director", "config", "deploy"])
 
     def list_instances(self, removing_hosts=False):
