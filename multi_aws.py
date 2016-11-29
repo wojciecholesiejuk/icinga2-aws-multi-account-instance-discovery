@@ -83,7 +83,7 @@ class process_icinga2_aws_instances:
                     subprocess.call(["icingacli", "director", "host", "create", instance['InstanceId'], "--json", json.dumps(instance_desc)])
                     print "added node " + instance['InstanceId'] + " (" + nodename + ")"
                 else:
-                    pass:
+                    pass
         if deploy_config:
             subprocess.call(["icingacli", "director", "config", "deploy"])
 
