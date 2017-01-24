@@ -1,4 +1,4 @@
-name: icinga2-aws-multi-account-instance-discovery
+name: icinga2-multi-aws
 description: "file:///README.md"
 url: "https://github.com/wojciecholesiejuk/icinga2-aws-multi-account-instance-discovery"
 tags: AWS
